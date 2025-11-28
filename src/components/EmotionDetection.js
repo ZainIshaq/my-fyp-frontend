@@ -66,8 +66,8 @@ export const useEmotionDetection = () => {
   const MIN_CONFIDENCE_THRESHOLD = 0.15 // Minimum emotion confidence
   const BUFFER_SIZE = 30 // Number of emotion readings to keep in buffer
 
-  // API base URL
-  const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/users`
+const API_BASE_URL = "https://my-fyp-backend-1.onrender.com/api/users"
+  
 
   // Add debug log - MEMOIZED
   const addDebugLog = useCallback((message) => {
