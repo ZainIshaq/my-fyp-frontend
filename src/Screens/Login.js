@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import "../../src/App.css";
 
-// RENDER BACKEND BASE URL CONSTANT
-// Use the deployed Render URL for all API calls
+// RENDER BACKEND BASE URL CONSTANT - (ADDED)
 const RENDER_BASE_URL = "https://my-fyp-backend-1.onrender.com";
 
 const LoginPage = () => {
@@ -56,7 +55,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // --- 1. Login API Call Updated ---
+      // --- API URL FIXED HERE ---
       const response = await fetch(`${RENDER_BASE_URL}/api/users/User-Login`, {
         method: "POST",
         headers: {
@@ -102,7 +101,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      // --- 2. Send OTP API Call Updated ---
+      // --- API URL FIXED HERE ---
       const response = await fetch(
         `${RENDER_BASE_URL}/api/users/forget-password-otp-send`,
         {
@@ -141,7 +140,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      // --- 3. Reset Password API Call Updated ---
+      // --- API URL FIXED HERE ---
       const response = await fetch(
         `${RENDER_BASE_URL}/api/users/forget-otp-verified-savepassword`,
         {
@@ -164,7 +163,10 @@ const LoginPage = () => {
       }
 
       setIsForgotPasswordOpen(false);
-      alert("Password reset successful. Please login with your new password.");
+      setError(
+        "Password reset successful. Please login with your new password."
+      );
+
       setResetEmail("");
       setResetOTP("");
       setNewPassword("");
@@ -203,7 +205,13 @@ const LoginPage = () => {
                 {/* Left side content */}       {" "}
         <div className="left-content">
                     <h1 className="welcome-text">Welcome to DEF .!</h1>         {" "}
-          <h3 className="skip-button">Dynamic Emotion Experience</h3>       {" "}
+          <h3 className="skip-button">Dynamic Emotion Experience</h3>         {" "}
+          <div className="overlay-text">
+                       {" "}
+            {/* This is where the background text/image overlay happens */}     
+               {" "}
+          </div>
+                 {" "}
         </div>
                 {/* Right side login card */}       {" "}
         <div className="login-card">
@@ -290,7 +298,7 @@ const LoginPage = () => {
             <div className="separator">
                             <span className="separator-line"></span>           
                 <span className="separator-text">or</span>             {" "}
-              <span className="separator-line"></span>         {" "}
+              <span className="separator-line"></span>           {" "}
             </div>
                      {" "}
           </div>

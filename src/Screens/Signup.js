@@ -4,7 +4,6 @@ import "../../src/App.css";
 import { useNavigate } from "react-router-dom";
 
 // RENDER BACKEND BASE URL CONSTANT - (ADDED)
-// Use the deployed Render URL for all API calls
 const RENDER_BASE_URL = "https://my-fyp-backend-1.onrender.com";
 
 const SignupPage = () => {
@@ -241,7 +240,6 @@ const SignupPage = () => {
                 value={formData.Age}
                 onChange={handleChange}
                 required
-                min="1"
               />
                          {" "}
             </div>
