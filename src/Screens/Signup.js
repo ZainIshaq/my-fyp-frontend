@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { EyeOff, Eye } from "lucide-react";
-import "../App.css"; // Sahi: Ek folder upar (Screens se src mein) jaao aur App.css ko import kar lo.
+import '../../src/App.css'; // Sahi: Ek folder upar (Screens se src mein) jaao aur App.css ko import kar lo.
 import { useNavigate } from "react-router-dom";
 
 // RENDER BACKEND BASE URL CONSTANT - (ADDED)

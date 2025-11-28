@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Button,
 } from "@mui/material";
-import "../App.css"; // Sahi: Ek folder upar (Screens se src mein) jaao aur App.css ko import kar lo.
+import '../../src/App.css';// Sahi: Ek folder upar (Screens se src mein) jaao aur App.css ko import kar lo.
 
 // RENDER BACKEND BASE URL CONSTANT - (ADDED)
 const RENDER_BASE_URL = "https://my-fyp-backend-1.onrender.com";
