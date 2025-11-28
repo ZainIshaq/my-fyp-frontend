@@ -11,9 +11,9 @@ const SignupPage = () => {
     Password: "",
     ConfirmPassword: "",
     Age: "",
-    OTP: "",
+    OTP: ""
   });
-
+  
   // UI state
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -22,13 +22,13 @@ const SignupPage = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -47,7 +47,7 @@ const SignupPage = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+    
     // Validation
     if (formData.Password !== formData.ConfirmPassword) {
       setError("Passwords do not match");
@@ -63,29 +63,25 @@ const SignupPage = () => {
     }
 
     try {
-      const response = await fetch(
-        // --- API URL FIXED HERE ---
-        `${RENDER_BASE_URL}/api/users/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Name: formData.Name,
-            Email: formData.Email,
-            Password: formData.Password,
-            Age: parseInt(formData.Age),
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/register`, {  
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Name: formData.Name,
+          Email: formData.Email,
+          Password: formData.Password,
+          Age: parseInt(formData.Age)
+        }),
+      });
 
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
+      
       // Open OTP modal if registration was successful
       setIsModalOpen(true);
     } catch (err) {
@@ -99,31 +95,28 @@ const SignupPage = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+    
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/verify-otp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Name: formData.Name,
-            Email: formData.Email,
-            Password: formData.Password,
-            Age: parseInt(formData.Age),
-            OTP: formData.OTP,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/verify-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Name: formData.Name,
+          Email: formData.Email,
+          Password: formData.Password,
+          Age: parseInt(formData.Age),
+          OTP: formData.OTP
+        }),
+      });
 
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.message || "OTP verification failed");
       }
-
+      
       setRegistrationSuccess(true);
     } catch (err) {
       setError(err.message || "OTP verification failed");
@@ -156,28 +149,25 @@ const SignupPage = () => {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Name: formData.Name,
-            Email: formData.Email,
-            Password: formData.Password,
-            Age: parseInt(formData.Age),
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/register`, {  
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Name: formData.Name,
+          Email: formData.Email,
+          Password: formData.Password,
+          Age: parseInt(formData.Age)
+        }),
+      });
 
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
+      
       // Open OTP modal if registration was successful
       setIsModalOpen(true);
     } catch (err) {
@@ -293,7 +283,11 @@ const SignupPage = () => {
               )}
             </div>
 
-            <button type="submit" className="signup-button" disabled={loading}>
+            <button 
+              type="submit" 
+              className="signup-button"
+              disabled={loading}
+            >
               {loading ? "Processing..." : "Signup"}
             </button>
           </form>
@@ -321,6 +315,7 @@ const SignupPage = () => {
               </a>
             </p>
           </div>
+
         </div>
       </div>
 
@@ -332,13 +327,13 @@ const SignupPage = () => {
             <p className="otp-modal-subtitle">
               You are under 18. Do you have parental access to use this service?
             </p>
-            <button
+            <button 
               className="otp-modal-confirm-button"
               onClick={() => handleParentalAccessConfirmation(true)}
             >
               Yes, I have parental access
             </button>
-            <button
+            <button 
               className="otp-modal-close-button"
               onClick={() => handleParentalAccessConfirmation(false)}
             >
@@ -354,16 +349,11 @@ const SignupPage = () => {
           <div className="otp-modal-content">
             {registrationSuccess ? (
               <>
-                <h2 className="otp-modal-title">
-                  Account Created Successfully!
-                </h2>
+                <h2 className="otp-modal-title">Account Created Successfully!</h2>
                 <p className="otp-modal-subtitle">
                   Your account has been created. You can now login.
                 </p>
-                <button
-                  className="otp-modal-confirm-button"
-                  onClick={closeModal}
-                >
+                <button className="otp-modal-confirm-button" onClick={closeModal}>
                   Go to Login
                 </button>
               </>
@@ -385,16 +375,16 @@ const SignupPage = () => {
                     onChange={handleChange}
                     required
                   />
-                  <button
-                    type="submit"
+                  <button 
+                    type="submit" 
                     className="otp-modal-confirm-button"
                     disabled={loading}
                   >
                     {loading ? "Verifying..." : "Confirm"}
                   </button>
-                  <button
+                  <button 
                     type="button"
-                    className="otp-modal-close-button"
+                    className="otp-modal-close-button" 
                     onClick={closeModal}
                   >
                     Close

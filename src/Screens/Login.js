@@ -1,32 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { EyeOff, Eye } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { EyeOff, Eye } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-} from "@mui/material";
-import "../../src/App.css";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import '../../src/App.css';
 
 const LoginPage = () => {
   // Form state
   const [formData, setFormData] = useState({
-    Email: "",
-    Password: "",
-    RememberMe: false,
+    Email: '',
+    Password: '',
+    RememberMe: false
   });
 
   // UI state
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [otpFieldVisible, setOtpFieldVisible] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetOTP, setResetOTP] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetOTP, setResetOTP] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // State for showing modals (Terms & Conditions and Customer Care)
@@ -36,11 +30,10 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: value,
+      [e.target.name]: value
     });
   };
 
@@ -50,23 +43,20 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/User-Login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Email: formData.Email,
-            Password: formData.Password,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/User-Login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Email: formData.Email,
+          Password: formData.Password,
+        }),
+      });
 
       const data = await response.json();
 
@@ -75,17 +65,17 @@ const LoginPage = () => {
       }
 
       // Store the token in localStorage for application-wide access
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem('authToken', data.token);
 
       // If remember me is checked, also store the email for convenience
       if (formData.RememberMe) {
-        localStorage.setItem("userEmail", formData.Email);
+        localStorage.setItem('userEmail', formData.Email);
       } else {
-        localStorage.removeItem("userEmail");
+        localStorage.removeItem('userEmail');
       }
 
       // Store user data in localStorage for easy access
-      localStorage.setItem("userData", JSON.stringify(data.user));
+      localStorage.setItem('userData', JSON.stringify(data.user));
 
       // Navigate to dashboard after successful login
       navigate("/Dashboard");
@@ -99,26 +89,23 @@ const LoginPage = () => {
   // Forgot Password modal logic
   const handleSendOTP = async () => {
     if (!resetEmail) {
-      setError("Please enter your email");
+      setError('Please enter your email');
       return;
     }
 
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await fetch(
-        `${RENDER_BASE_URL}/api/users/forget-password-otp-send`, // URL FIXED
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Email: resetEmail,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/forget-password-otp-send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Email: resetEmail,
+        }),
+      });
 
       const data = await response.json();
 
@@ -127,7 +114,7 @@ const LoginPage = () => {
       }
 
       setOtpFieldVisible(true);
-      setError("");
+      setError('');
     } catch (err) {
       setError(err.message || "Failed to send OTP");
     } finally {
@@ -137,28 +124,25 @@ const LoginPage = () => {
 
   const handleResetPassword = async () => {
     if (!resetOTP || !newPassword) {
-      setError("Please enter both OTP and new password");
+      setError('Please enter both OTP and new password');
       return;
     }
 
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/users/forget-otp-verified-savepassword`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Email: resetEmail,
-            OTP: resetOTP,
-            NewPassword: newPassword,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/forget-otp-verified-savepassword`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Email: resetEmail,
+          OTP: resetOTP,
+          NewPassword: newPassword,
+        }),
+      });
 
       const data = await response.json();
 
@@ -168,9 +152,9 @@ const LoginPage = () => {
 
       setIsForgotPasswordOpen(false);
       alert("Password reset successful. Please login with your new password.");
-      setResetEmail("");
-      setResetOTP("");
-      setNewPassword("");
+      setResetEmail('');
+      setResetOTP('');
+      setNewPassword('');
       setOtpFieldVisible(false);
     } catch (err) {
       setError(err.message || "Password reset failed");
@@ -181,21 +165,21 @@ const LoginPage = () => {
 
   const handleCloseModal = () => {
     setIsForgotPasswordOpen(false);
-    setResetEmail("");
-    setResetOTP("");
-    setNewPassword("");
+    setResetEmail('');
+    setResetOTP('');
+    setNewPassword('');
     setOtpFieldVisible(false);
-    setError("");
+    setError('');
   };
 
   // Check if we have a remembered email
   useEffect(() => {
-    const rememberedEmail = localStorage.getItem("userEmail");
+    const rememberedEmail = localStorage.getItem('userEmail');
     if (rememberedEmail) {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         Email: rememberedEmail,
-        RememberMe: true,
+        RememberMe: true
       }));
     }
   }, []);
@@ -242,17 +226,9 @@ const LoginPage = () => {
                 required
               />
               {passwordVisible ? (
-                <Eye
-                  className="eye-icon"
-                  size={20}
-                  onClick={() => setPasswordVisible(false)}
-                />
+                <Eye className="eye-icon" size={20} onClick={() => setPasswordVisible(false)} />
               ) : (
-                <EyeOff
-                  className="eye-icon"
-                  size={20}
-                  onClick={() => setPasswordVisible(true)}
-                />
+                <EyeOff className="eye-icon" size={20} onClick={() => setPasswordVisible(true)} />
               )}
             </div>
 
@@ -268,7 +244,11 @@ const LoginPage = () => {
               <label htmlFor="remember">Remember me</label>
             </div>
 
-            <button type="submit" className="login-button" disabled={loading}>
+            <button
+              type="submit"
+              className="login-button"
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
@@ -289,19 +269,16 @@ const LoginPage = () => {
           </div>
 
           <div className="signup-section">
-            <p>
-              Don't have an account?{" "}
-              <a
-                href="#"
-                className="signup-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  signupPage();
-                }}
-              >
-                Sign-up
-              </a>
-            </p>
+            <p>Don't have an account? <a
+              href="#"
+              className="signup-link"
+              onClick={(e) => {
+                e.preventDefault();
+                signupPage();
+              }}
+            >
+              Sign-up
+            </a></p>
           </div>
 
           <div className="footer-links">
@@ -327,56 +304,28 @@ const LoginPage = () => {
         <DialogContent>
           <p>By using DEF, you agree to the following terms:</p>
           <ul>
-            <li>
-              Users must agree to the Terms before using DEF. If they’re under
-              18, they need parental consent.
-            </li>
-            <li>
-              DEF uses AI to analyze facial emotions in real-time and suggests
-              movies that match your emotional state. These recommendations are
-              for entertainment purposes.
-            </li>
-            <li>
-              Your emotional data is processed live through your webcam and not
-              stored unless clearly stated. We respect your privacy and handle
-              all data responsibly.
-            </li>
-            <li>
-              All designs, software, and content belong to DEF. You can’t copy
-              or reuse anything without permission.
-            </li>
-            <li>
-              Emotion detection is based on AI and may not always be accurate.
-              Recommendations are not guaranteed to match your mood or
-              preferences exactly.
-            </li>
-            <li>
-              We’re not responsible for any issues caused by using the platform,
-              including inaccurate suggestions or technical problems.
-            </li>
+            <li>Users must agree to the Terms before using DEF. If they’re under 18, they need parental consent.</li>
+            <li>DEF uses AI to analyze facial emotions in real-time and suggests movies that match your emotional state. These recommendations are for entertainment purposes.</li>
+            <li>Your emotional data is processed live through your webcam and not stored unless clearly stated. We respect your privacy and handle all data responsibly.</li>
+            <li>All designs, software, and content belong to DEF. You can’t copy or reuse anything without permission.</li>
+            <li>Emotion detection is based on AI and may not always be accurate. Recommendations are not guaranteed to match your mood or preferences exactly.</li>
+            <li>We’re not responsible for any issues caused by using the platform, including inaccurate suggestions or technical problems.</li>
           </ul>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowTerms(false)} color="primary">
-            Close
-          </Button>
+          <Button onClick={() => setShowTerms(false)} color="primary">Close</Button>
         </DialogActions>
       </Dialog>
 
       {/* Customer Care Modal */}
-      <Dialog
-        open={showCustomerCare}
-        onClose={() => setShowCustomerCare(false)}
-      >
+      <Dialog open={showCustomerCare} onClose={() => setShowCustomerCare(false)}>
         <DialogTitle>Customer Care</DialogTitle>
         <DialogContent>
           <p>Email: abdullah5601013@gmail.com</p>
           <p>Contact Number: 03075601013</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowCustomerCare(false)} color="primary">
-            Close
-          </Button>
+          <Button onClick={() => setShowCustomerCare(false)} color="primary">Close</Button>
         </DialogActions>
       </Dialog>
     </>
