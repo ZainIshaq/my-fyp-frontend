@@ -12,14 +12,17 @@ const SignupPage = () => {
     ConfirmPassword: "",
     Age: "",
     OTP: "",
-  }); // UI state
+  });
+
+  // UI state
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Used for success message only
-  const [isAgeConfirmationOpen, setIsAgeConfirmationOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAgeConfirmationOpen, setIsAgeConfirmationOpen] = useState(false); // State for parental confirmation
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -27,10 +30,9 @@ const SignupPage = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-  }; // 🚨 Navigate to Login page (This is the target)
+  };
 
   const navigateToLogin = () => {
-    // Assuming '/' is your Login route or you can change it to '/login'
     navigate("/");
   };
 
@@ -44,15 +46,18 @@ const SignupPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // Validation
+    setLoading(true);
+
+    // Validation
     if (formData.Password !== formData.ConfirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
       return;
-    } // If age is under 18, ask for parental access
+    }
 
+    // If age is under 18, ask for parental access
     if (parseInt(formData.Age) < 18) {
-      setIsAgeConfirmationOpen(true);
+      setIsAgeConfirmationOpen(true); // Open age confirmation modal
       setLoading(false);
       return;
     }
@@ -75,22 +80,25 @@ const SignupPage = () => {
       );
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
-      } // 🚨 SUCCESS FIX: OTP modal ko bypass karein
-      alert(data.message || "Registration successful! Please login.");
-      navigateToLogin(); // Direct Login page par redirect
+      }
+
+      // Open OTP modal if registration was successful
+      setIsModalOpen(true);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
-  }; // NOTE: OTP verification logic ko ab use nahi karenge
+  };
 
   const handleOTPVerification = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BASE_URL}/api/users/verify-otp`,
@@ -110,30 +118,36 @@ const SignupPage = () => {
       );
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || "OTP verification failed");
       }
+
       setRegistrationSuccess(true);
     } catch (err) {
       setError(err.message || "OTP verification failed");
     } finally {
       setLoading(false);
     }
-  }; // Function to handle parental access confirmation
+  };
 
+  // Function to handle parental access confirmation
   const handleParentalAccessConfirmation = (confirm) => {
     if (confirm) {
-      handleSignupWithoutEvent();
+      // Proceed with signup if parental access is confirmed
+      handleSignupWithoutEvent(); // Call a new function that handles signup without needing an event
     } else {
       setError("You need parental access to register under 18.");
-      setIsAgeConfirmationOpen(false);
+      setIsAgeConfirmationOpen(false); // Close modal if denied
     }
-  }; // New function for handling signup without event
+  };
 
+  // New function for handling signup without event
   const handleSignupWithoutEvent = async () => {
     setError("");
-    setLoading(true); // Validation
+    setLoading(true);
 
+    // Validation
     if (formData.Password !== formData.ConfirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -158,11 +172,13 @@ const SignupPage = () => {
       );
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
-      } // 🚨 SUCCESS FIX: OTP modal ko bypass karein
-      alert(data.message || "Registration successful! Please login.");
-      navigateToLogin(); // Direct Login page par redirect
+      }
+
+      // Open OTP modal if registration was successful
+      setIsModalOpen(true);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -170,30 +186,26 @@ const SignupPage = () => {
     }
   };
 
-  // ... (Your JSX return structure remains the same, but the OTP modal logic is now largely redundant)
   return (
     <>
-           {" "}
       <div className="signup-container">
-                {/* Left side content */}       {" "}
+        {/* Left side content */}
         <div className="left-content">
-                    <h1 className="welcome-text">Roll the carpet.!</h1>         {" "}
-          <h3 className="skip-button">Ready to Register ?</h3>       {" "}
+          <h1 className="welcome-text">Roll the carpet.!</h1>
+          <h3 className="skip-button">Ready to Register ?</h3>
         </div>
-                {/* Right side login card */}       {" "}
+
+        {/* Right side login card */}
         <div className="login-card">
-                   {" "}
           <div className="card-header">
-                        <h2 className="login-title">Signup</h2>           {" "}
-            <p className="login-subtitle">Just some details to get you in!</p> 
-                   {" "}
+            <h2 className="login-title">Signup</h2>
+            <p className="login-subtitle">Just some details to get you in!</p>
           </div>
-                    {error && <div className="error-message">{error}</div>}     
-             {" "}
+
+          {error && <div className="error-message">{error}</div>}
+
           <form className="login-form" onSubmit={handleSignup}>
-                       {" "}
             <div>
-                           {" "}
               <input
                 type="text"
                 name="Name"
@@ -203,11 +215,8 @@ const SignupPage = () => {
                 onChange={handleChange}
                 required
               />
-                         {" "}
             </div>
-                       {" "}
             <div>
-                           {" "}
               <input
                 type="email"
                 name="Email"
@@ -217,11 +226,8 @@ const SignupPage = () => {
                 onChange={handleChange}
                 required
               />
-                         {" "}
             </div>
-                       {" "}
             <div>
-                           {" "}
               <input
                 type="number"
                 name="Age"
@@ -232,11 +238,10 @@ const SignupPage = () => {
                 required
                 min="1"
               />
-                         {" "}
             </div>
-                        {/* Password field */}           {" "}
+
+            {/* Password field */}
             <div className="password-field">
-                           {" "}
               <input
                 type={passwordVisible ? "text" : "password"}
                 name="Password"
@@ -246,7 +251,6 @@ const SignupPage = () => {
                 onChange={handleChange}
                 required
               />
-                           {" "}
               {passwordVisible ? (
                 <Eye
                   className="eye-icon"
@@ -260,11 +264,10 @@ const SignupPage = () => {
                   onClick={() => setPasswordVisible(true)}
                 />
               )}
-                         {" "}
             </div>
-                        {/* Confirm Password field */}           {" "}
+
+            {/* Confirm Password field */}
             <div className="password-field">
-                           {" "}
               <input
                 type={confirmPasswordVisible ? "text" : "password"}
                 name="ConfirmPassword"
@@ -274,7 +277,6 @@ const SignupPage = () => {
                 onChange={handleChange}
                 required
               />
-                           {" "}
               {confirmPasswordVisible ? (
                 <Eye
                   className="eye-icon"
@@ -288,29 +290,24 @@ const SignupPage = () => {
                   onClick={() => setConfirmPasswordVisible(true)}
                 />
               )}
-                         {" "}
             </div>
-                       {" "}
+
             <button type="submit" className="signup-button" disabled={loading}>
-                            {loading ? "Processing..." : "Signup"}           {" "}
+              {loading ? "Processing..." : "Signup"}
             </button>
-                     {" "}
           </form>
-                   {" "}
+
           <div className="extra-links">
-                       {" "}
             <div className="separator">
-                            <span className="separator-line"></span>           
-                <span className="separator-text">or</span>             {" "}
-              <span className="separator-line"></span>           {" "}
+              <span className="separator-line"></span>
+              <span className="separator-text">or</span>
+              <span className="separator-line"></span>
             </div>
-                     {" "}
           </div>
-                   {" "}
+
           <div className="signup-section">
-                       {" "}
             <p>
-                            Already Registered?              {" "}
+              Already Registered?{" "}
               <a
                 href="#"
                 className="Login-link"
@@ -319,88 +316,65 @@ const SignupPage = () => {
                   navigateToLogin();
                 }}
               >
-                                Login              {" "}
+                Login
               </a>
-                         {" "}
             </p>
-                     {" "}
           </div>
-                 {" "}
         </div>
-             {" "}
       </div>
-            {/* Age Confirmation Modal */}     {" "}
+
+      {/* Age Confirmation Modal */}
       {isAgeConfirmationOpen && (
         <div className="otp-modal-overlay">
-                   {" "}
           <div className="otp-modal-content">
-                       {" "}
-            <h2 className="otp-modal-title">Parental Access Confirmation</h2>   
-                   {" "}
+            <h2 className="otp-modal-title">Parental Access Confirmation</h2>
             <p className="otp-modal-subtitle">
-                            You are under 18. Do you have parental access to use
-              this service?            {" "}
+              You are under 18. Do you have parental access to use this service?
             </p>
-                       {" "}
             <button
               className="otp-modal-confirm-button"
               onClick={() => handleParentalAccessConfirmation(true)}
             >
-                            Yes, I have parental access            {" "}
+              Yes, I have parental access
             </button>
-                       {" "}
             <button
               className="otp-modal-close-button"
               onClick={() => handleParentalAccessConfirmation(false)}
             >
-                            No, I don't            {" "}
+              No, I don't
             </button>
-                     {" "}
           </div>
-                 {" "}
         </div>
       )}
-            {/* OTP Modal */}     {" "}
+
+      {/* OTP Modal */}
       {isModalOpen && (
         <div className="otp-modal-overlay">
-                   {" "}
           <div className="otp-modal-content">
-                       {" "}
             {registrationSuccess ? (
               <>
-                               {" "}
                 <h2 className="otp-modal-title">
                   Account Created Successfully!
                 </h2>
-                               {" "}
                 <p className="otp-modal-subtitle">
-                                    Your account has been created. You can now
-                  login.                {" "}
+                  Your account has been created. You can now login.
                 </p>
-                               {" "}
                 <button
                   className="otp-modal-confirm-button"
                   onClick={closeModal}
                 >
-                                    Go to Login                {" "}
+                  Go to Login
                 </button>
-                             {" "}
               </>
             ) : (
               <>
-                               {" "}
-                <h2 className="otp-modal-title">Confirm Your Identity</h2>     
-                         {" "}
+                <h2 className="otp-modal-title">Confirm Your Identity</h2>
                 <p className="otp-modal-subtitle">
-                                    We have sent the OTP to your email. Please
-                  enter it below to                   confirm your identity.    
-                             {" "}
+                  We have sent the OTP to your email. Please enter it below to
+                  confirm your identity.
                 </p>
-                               {" "}
-                {error && <div className="error-message">{error}</div>}         
-                     {" "}
+                {error && <div className="error-message">{error}</div>}
                 <form onSubmit={handleOTPVerification}>
-                                   {" "}
                   <input
                     type="text"
                     name="OTP"
@@ -410,34 +384,26 @@ const SignupPage = () => {
                     onChange={handleChange}
                     required
                   />
-                                   {" "}
                   <button
                     type="submit"
                     className="otp-modal-confirm-button"
                     disabled={loading}
                   >
-                                        {loading ? "Verifying..." : "Confirm"} 
-                                   {" "}
+                    {loading ? "Verifying..." : "Confirm"}
                   </button>
-                                   {" "}
                   <button
                     type="button"
                     className="otp-modal-close-button"
                     onClick={closeModal}
                   >
-                                        Close                  {" "}
+                    Close
                   </button>
-                                 {" "}
                 </form>
-                             {" "}
               </>
             )}
-                     {" "}
           </div>
-                 {" "}
         </div>
       )}
-         {" "}
     </>
   );
 };
