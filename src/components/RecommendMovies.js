@@ -24,9 +24,6 @@ import {
 import { styled } from "@mui/system";
 import { useState } from "react";
 
-// RENDER BACKEND BASE URL CONSTANT - (ADDED)
-const RENDER_BASE_URL = "https://my-fyp-backend-1.onrender.com";
-
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 320,
   minHeight: 480, // Changed from height to minHeight
@@ -96,20 +93,24 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
     message: "",
     severity: "success",
   });
-  const [loading, setLoading] = useState(false); // API base URL (FIXED HERE)
+  const [loading, setLoading] = useState(false);
 
-  const API_BASE_URL = `${RENDER_BASE_URL}/api/users`; // Get auth token
+  // API base URL
+  const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/users`;
 
+  // Get auth token
   const getAuthToken = () => {
     return (
       localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
     );
-  }; // Show notification
+  };
 
+  // Show notification
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
-  }; // Handle Watch Later click
+  };
 
+  // Handle Watch Later click
   const handleWatchLater = async (movie) => {
     setLoading(true);
     try {
@@ -129,7 +130,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
         confidence: movie.confidence,
       };
 
-      // --- API CALL FIXED HERE ---
       const response = await fetch(`${API_BASE_URL}/watch-later`, {
         method: "POST",
         headers: {
@@ -138,7 +138,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
         },
         body: JSON.stringify(movieData),
       });
-      // ---------------------------
 
       const result = await response.json();
 
@@ -152,8 +151,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
       showSnackbar("Error adding to Watch Later", "error");
     }
     setLoading(false);
-  }; // Handle Favorite click
+  };
 
+  // Handle Favorite click
   const handleFavorite = async (movie) => {
     setLoading(true);
     try {
@@ -173,7 +173,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
         confidence: movie.confidence,
       };
 
-      // --- API CALL FIXED HERE ---
       const response = await fetch(`${API_BASE_URL}/favorites`, {
         method: "POST",
         headers: {
@@ -182,7 +181,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
         },
         body: JSON.stringify(movieData),
       });
-      // ---------------------------
 
       const result = await response.json();
 
@@ -256,24 +254,20 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
           backgroundColor: "rgba(255,255,255,0.05)",
         }}
       >
-               {" "}
         <Typography variant="h6" color="text.secondary" textAlign="center">
-                    🎬 No movie recommendations available           <br />     
-             {" "}
+          🎬 No movie recommendations available
+          <br />
           <Typography variant="caption">
-                        Start the video and enable camera to get personalized  
-                      recommendations!          {" "}
+            Start the video and enable camera to get personalized
+            recommendations!
           </Typography>
-                 {" "}
         </Typography>
-             {" "}
       </Box>
     );
   }
 
   return (
     <>
-           {" "}
       <Box
         sx={{
           display: "grid",
@@ -284,12 +278,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
           boxSizing: "border-box",
         }}
       >
-               {" "}
         {recommendedMovies.map((movie, index) => (
           <StyledCard key={movie.id || index}>
-                       {" "}
             <Box sx={{ position: "relative", flexShrink: 0 }}>
-                           {" "}
               <StyledCardMedia
                 image={
                   movie.posterUrl ||
@@ -298,7 +289,8 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                 }
                 title={movie.title}
               />
-                            {/* Emotion/Reason Chip */}             {" "}
+
+              {/* Emotion/Reason Chip */}
               {movie.emotionMatch && (
                 <EmotionChip
                   label={
@@ -313,25 +305,21 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                   }}
                 />
               )}
-                            {/* Rating */}             {" "}
+
+              {/* Rating */}
               {movie.rating && (
                 <RatingContainer>
-                                   {" "}
-                  <StarIcon sx={{ fontSize: 16, color: "#FFD700" }} />         
-                         {" "}
+                  <StarIcon sx={{ fontSize: 16, color: "#FFD700" }} />
                   <Typography
                     variant="caption"
                     sx={{ color: "white", fontWeight: "bold" }}
                   >
-                                        {movie.rating.toFixed(1)}               
-                     {" "}
+                    {movie.rating.toFixed(1)}
                   </Typography>
-                                 {" "}
                 </RatingContainer>
               )}
-                         {" "}
             </Box>
-                       {" "}
+
             <CardContent
               sx={{
                 backgroundColor: "#2a2a2a",
@@ -343,9 +331,7 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                 padding: "16px",
               }}
             >
-                           {" "}
               <Box>
-                               {" "}
                 <Typography
                   gutterBottom
                   variant="h6"
@@ -363,9 +349,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     mb: 2,
                   }}
                 >
-                                    {movie.title}               {" "}
+                  {movie.title}
                 </Typography>
-                               {" "}
+
                 <Box
                   sx={{
                     display: "flex",
@@ -374,18 +360,14 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     mb: 1,
                   }}
                 >
-                                   {" "}
                   <CalendarTodayIcon
                     sx={{ fontSize: 14, mr: 0.5, color: "#ccc" }}
                   />
-                                   {" "}
                   <Typography variant="caption" color="#ccc">
-                                        {formatReleaseDate(movie.releaseDate)} 
-                                   {" "}
+                    {formatReleaseDate(movie.releaseDate)}
                   </Typography>
-                                 {" "}
                 </Box>
-                               {" "}
+
                 <Typography
                   variant="body2"
                   color="#bbb"
@@ -396,12 +378,10 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     fontWeight: "500",
                   }}
                 >
-                                    {movie.genre || "Various Genres"}           
-                     {" "}
+                  {movie.genre || "Various Genres"}
                 </Typography>
-                             {" "}
               </Box>
-                           {" "}
+
               {movie.recommendationReason && (
                 <Typography
                   variant="caption"
@@ -414,12 +394,12 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     mt: "auto",
                   }}
                 >
-                                    {movie.recommendationReason}               {" "}
+                  {movie.recommendationReason}
                 </Typography>
               )}
-                         {" "}
             </CardContent>
-                        {/* Watch Movie Button */}           {" "}
+
+            {/* Watch Movie Button */}
             <CardActions
               sx={{
                 display: "flex",
@@ -429,7 +409,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                 flexShrink: 0,
               }}
             >
-                           {" "}
               <Button
                 variant="contained"
                 size="small"
@@ -449,11 +428,11 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                   },
                 }}
               >
-                                🎬 Watch Movie              {" "}
+                🎬 Watch Movie
               </Button>
-                         {" "}
             </CardActions>
-                        {/* Action Buttons */}           {" "}
+
+            {/* Action Buttons */}
             <CardActions
               sx={{
                 display: "flex",
@@ -464,9 +443,7 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                 flexShrink: 0,
               }}
             >
-                           {" "}
               <Tooltip title="Add to Watch Later">
-                               {" "}
                 <Button
                   size="small"
                   startIcon={<WatchLaterIcon />}
@@ -485,13 +462,11 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     },
                   }}
                 >
-                                    {loading ? "..." : "Later"}               {" "}
+                  {loading ? "..." : "Later"}
                 </Button>
-                             {" "}
               </Tooltip>
-                           {" "}
+
               <Tooltip title="Add to Favorites">
-                               {" "}
                 <Button
                   size="small"
                   startIcon={<FavoriteIcon />}
@@ -510,13 +485,11 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     },
                   }}
                 >
-                                    {loading ? "..." : "♡"}               {" "}
+                  {loading ? "..." : "♡"}
                 </Button>
-                             {" "}
               </Tooltip>
-                           {" "}
+
               <Tooltip title="View movie details">
-                               {" "}
                 <Button
                   size="small"
                   startIcon={<InfoIcon />}
@@ -531,18 +504,15 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     },
                   }}
                 >
-                                    Info                {" "}
+                  Info
                 </Button>
-                             {" "}
               </Tooltip>
-                         {" "}
             </CardActions>
-                     {" "}
           </StyledCard>
         ))}
-             {" "}
       </Box>
-            {/* Movie Details Dialog */}     {" "}
+
+      {/* Movie Details Dialog */}
       <Dialog
         open={openStory}
         onClose={handleCloseStory}
@@ -557,7 +527,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
           },
         }}
       >
-               {" "}
         <DialogTitle
           sx={{
             backgroundColor: "#2a2a2a",
@@ -568,29 +537,22 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
             pb: 2,
           }}
         >
-                   {" "}
           <Box>
-                       {" "}
             <Typography
               variant="h5"
               component="div"
               sx={{ fontWeight: "bold" }}
             >
-                            {selectedMovie?.title}           {" "}
+              {selectedMovie?.title}
             </Typography>
-                       {" "}
             {selectedMovie?.releaseDate && (
               <Typography variant="subtitle2" color="#ccc">
-                                Released:{" "}
-                {formatReleaseDate(selectedMovie.releaseDate)}             {" "}
+                Released: {formatReleaseDate(selectedMovie.releaseDate)}
               </Typography>
             )}
-                     {" "}
           </Box>
-                   {" "}
           {selectedMovie?.rating && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                           {" "}
               <Rating
                 value={selectedMovie.rating / 2}
                 precision={0.1}
@@ -598,24 +560,17 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                 size="small"
                 sx={{ color: "#FFD700" }}
               />
-                           {" "}
               <Typography variant="body2" color="#FFD700" fontWeight="bold">
-                                {selectedMovie.rating.toFixed(1)}/10            
-                 {" "}
+                {selectedMovie.rating.toFixed(1)}/10
               </Typography>
-                         {" "}
             </Box>
           )}
-                 {" "}
         </DialogTitle>
-               {" "}
+
         <DialogContent sx={{ backgroundColor: "#1a1a1a", color: "white" }}>
-                   {" "}
           <Box sx={{ display: "flex", gap: 3, mb: 3 }}>
-                       {" "}
             {selectedMovie?.posterUrl && (
               <Box sx={{ flexShrink: 0 }}>
-                               {" "}
                 <img
                   src={selectedMovie.posterUrl}
                   alt={selectedMovie.title}
@@ -627,41 +582,34 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                     boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
                   }}
                 />
-                             {" "}
               </Box>
             )}
-                       {" "}
+
             <Box sx={{ flex: 1 }}>
-                           {" "}
               {selectedMovie?.genre && (
                 <Box sx={{ mb: 2 }}>
-                                   {" "}
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
                     color="#4CAF50"
                     gutterBottom
                   >
-                                        Genre                  {" "}
+                    Genre
                   </Typography>
-                                   {" "}
                   <Typography variant="body1">{selectedMovie.genre}</Typography>
-                                 {" "}
                 </Box>
               )}
-                           {" "}
+
               {selectedMovie?.recommendationReason && (
                 <Box sx={{ mb: 2 }}>
-                                   {" "}
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
                     color="#FF9800"
                     gutterBottom
                   >
-                                        Why This Movie?                  {" "}
+                    Why This Movie?
                   </Typography>
-                                   {" "}
                   <Chip
                     label={selectedMovie.recommendationReason}
                     sx={{
@@ -672,35 +620,28 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
                       fontWeight: "bold",
                     }}
                   />
-                                 {" "}
                 </Box>
               )}
-                         {" "}
             </Box>
-                     {" "}
           </Box>
-                   {" "}
+
           {selectedMovie?.description && (
             <Box>
-                           {" "}
               <Typography
                 variant="subtitle1"
                 fontWeight="bold"
                 color="#E91E63"
                 gutterBottom
               >
-                                Synopsis              {" "}
+                Synopsis
               </Typography>
-                           {" "}
               <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
-                                {selectedMovie.description}             {" "}
+                {selectedMovie.description}
               </Typography>
-                         {" "}
             </Box>
           )}
-                 {" "}
         </DialogContent>
-               {" "}
+
         <DialogActions
           sx={{
             backgroundColor: "#2a2a2a",
@@ -708,7 +649,6 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
             gap: 2,
           }}
         >
-                   {" "}
           <Button
             onClick={() => handleWatchLater(selectedMovie)}
             variant="outlined"
@@ -722,9 +662,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
               },
             }}
           >
-                        {loading ? "Adding..." : "Add to Watch Later"}         {" "}
+            {loading ? "Adding..." : "Add to Watch Later"}
           </Button>
-                   {" "}
+
           <Button
             onClick={() => handleFavorite(selectedMovie)}
             variant="outlined"
@@ -738,9 +678,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
               },
             }}
           >
-                        {loading ? "Adding..." : "Add to Favorites"}         {" "}
+            {loading ? "Adding..." : "Add to Favorites"}
           </Button>
-                   {" "}
+
           <Button
             onClick={() => handleWatchMovie(selectedMovie)}
             variant="contained"
@@ -751,9 +691,9 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
               },
             }}
           >
-                        Watch Now          {" "}
+            Watch Now
           </Button>
-                   {" "}
+
           <Button
             onClick={handleCloseStory}
             variant="outlined"
@@ -765,30 +705,26 @@ const RecommendedMovies = ({ recommendedMovies = [] }) => {
               },
             }}
           >
-                        Close          {" "}
+            Close
           </Button>
-                 {" "}
         </DialogActions>
-             {" "}
       </Dialog>
-            {/* Snackbar for notifications */}     {" "}
+
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-               {" "}
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >
-                    {snackbar.message}       {" "}
+          {snackbar.message}
         </Alert>
-             {" "}
       </Snackbar>
-         {" "}
     </>
   );
 };

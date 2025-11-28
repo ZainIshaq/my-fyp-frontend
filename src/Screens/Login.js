@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { EyeOff, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,10 +8,7 @@ import {
   DialogTitle,
   Button,
 } from "@mui/material";
-import '../../src/App.css';// Sahi: Ek folder upar (Screens se src mein) jaao aur App.css ko import kar lo.
-
-// RENDER BACKEND BASE URL CONSTANT - (ADDED)
-const RENDER_BASE_URL = "https://my-fyp-backend-1.onrender.com";
+import "../../src/App.css";
 
 const LoginPage = () => {
   // Form state
@@ -19,8 +16,9 @@ const LoginPage = () => {
     Email: "",
     Password: "",
     RememberMe: false,
-  }); // UI state
+  });
 
+  // UI state
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [otpFieldVisible, setOtpFieldVisible] = useState(false);
@@ -29,8 +27,9 @@ const LoginPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // State for showing modals (Terms & Conditions and Customer Care)
+  const [loading, setLoading] = useState(false);
 
+  // State for showing modals (Terms & Conditions and Customer Care)
   const [showTerms, setShowTerms] = useState(false);
   const [showCustomerCare, setShowCustomerCare] = useState(false);
 
@@ -55,42 +54,49 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // --- API URL FIXED HERE ---
-      const response = await fetch(`${RENDER_BASE_URL}/api/users/User-Login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Email: formData.Email,
-          Password: formData.Password,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/users/User-Login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Email: formData.Email,
+            Password: formData.Password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
-      } // Store the token in localStorage for application-wide access
+      }
 
-      localStorage.setItem("authToken", data.token); // If remember me is checked, also store the email for convenience
+      // Store the token in localStorage for application-wide access
+      localStorage.setItem("authToken", data.token);
 
+      // If remember me is checked, also store the email for convenience
       if (formData.RememberMe) {
         localStorage.setItem("userEmail", formData.Email);
       } else {
         localStorage.removeItem("userEmail");
-      } // Store user data in localStorage for easy access
+      }
 
-      localStorage.setItem("userData", JSON.stringify(data.user)); // Navigate to dashboard after successful login
+      // Store user data in localStorage for easy access
+      localStorage.setItem("userData", JSON.stringify(data.user));
 
+      // Navigate to dashboard after successful login
       navigate("/Dashboard");
     } catch (err) {
       setError(err.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
-  }; // Forgot Password modal logic
+  };
 
+  // Forgot Password modal logic
   const handleSendOTP = async () => {
     if (!resetEmail) {
       setError("Please enter your email");
@@ -101,9 +107,8 @@ const LoginPage = () => {
     setError("");
 
     try {
-      // --- API URL FIXED HERE ---
       const response = await fetch(
-        `${RENDER_BASE_URL}/api/users/forget-password-otp-send`,
+        `${RENDER_BASE_URL}/api/users/forget-password-otp-send`, // URL FIXED
         {
           method: "POST",
           headers: {
@@ -140,9 +145,8 @@ const LoginPage = () => {
     setError("");
 
     try {
-      // --- API URL FIXED HERE ---
       const response = await fetch(
-        `${RENDER_BASE_URL}/api/users/forget-otp-verified-savepassword`,
+        `${process.env.REACT_APP_BASE_URL}/api/users/forget-otp-verified-savepassword`,
         {
           method: "POST",
           headers: {
@@ -163,10 +167,7 @@ const LoginPage = () => {
       }
 
       setIsForgotPasswordOpen(false);
-      // NOTE: alert() hata kar error state use kiya gaya hai
-      setError(
-        "Password reset successful. Please login with your new password."
-      );
+      alert("Password reset successful. Please login with your new password.");
       setResetEmail("");
       setResetOTP("");
       setNewPassword("");
@@ -185,8 +186,9 @@ const LoginPage = () => {
     setNewPassword("");
     setOtpFieldVisible(false);
     setError("");
-  }; // Check if we have a remembered email
+  };
 
+  // Check if we have a remembered email
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("userEmail");
     if (rememberedEmail) {
@@ -200,26 +202,24 @@ const LoginPage = () => {
 
   return (
     <>
-           {" "}
       <div className="login-container">
-                {/* Left side content */}       {" "}
+        {/* Left side content */}
         <div className="left-content">
-                    <h1 className="welcome-text">Welcome to DEF .!</h1>         {" "}
-          <h3 className="skip-button">Dynamic Emotion Experience</h3>       {" "}
+          <h1 className="welcome-text">Welcome to DEF .!</h1>
+          <h3 className="skip-button">Dynamic Emotion Experience</h3>
         </div>
-                {/* Right side login card */}       {" "}
+
+        {/* Right side login card */}
         <div className="login-card">
-                   {" "}
           <div className="card-header">
-                        <h2 className="login-title">Login</h2>           {" "}
-            <p className="login-subtitle">Glad you're back.!</p>         {" "}
+            <h2 className="login-title">Login</h2>
+            <p className="login-subtitle">Glad you're back.!</p>
           </div>
-                    {error && <div className="error-message">{error}</div>}     
-             {" "}
+
+          {error && <div className="error-message">{error}</div>}
+
           <form className="login-form" onSubmit={handleLogin}>
-                       {" "}
             <div>
-                           {" "}
               <input
                 type="email"
                 name="Email"
@@ -229,11 +229,9 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
               />
-                         {" "}
             </div>
-                       {" "}
+
             <div className="password-field">
-                           {" "}
               <input
                 type={passwordVisible ? "text" : "password"}
                 name="Password"
@@ -243,7 +241,6 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
               />
-                           {" "}
               {passwordVisible ? (
                 <Eye
                   className="eye-icon"
@@ -257,11 +254,9 @@ const LoginPage = () => {
                   onClick={() => setPasswordVisible(true)}
                 />
               )}
-                         {" "}
             </div>
-                       {" "}
+
             <div className="remember-section">
-                           {" "}
               <input
                 type="checkbox"
                 id="remember"
@@ -270,35 +265,30 @@ const LoginPage = () => {
                 checked={formData.RememberMe}
                 onChange={handleChange}
               />
-                            <label htmlFor="remember">Remember me</label>       
-                 {" "}
+              <label htmlFor="remember">Remember me</label>
             </div>
-                       {" "}
+
             <button type="submit" className="login-button" disabled={loading}>
-                            {loading ? "Logging in..." : "Login"}           {" "}
+              {loading ? "Logging in..." : "Login"}
             </button>
-                     {" "}
           </form>
-                   {" "}
+
           <div className="extra-links">
-                       {" "}
             <p
               className="forgot-link"
               onClick={() => setIsForgotPasswordOpen(true)}
             >
-                            Forgot password?            {" "}
+              Forgot password?
             </p>
-                       {" "}
+
             <div className="separator">
-                            <span className="separator-line"></span>           
-                <span className="separator-text">or</span>             {" "}
-              <span className="separator-line"></span>           {" "}
+              <span className="separator-line"></span>
+              <span className="separator-text">or</span>
+              <span className="separator-line"></span>
             </div>
-                     {" "}
           </div>
-                   {" "}
+
           <div className="signup-section">
-                       {" "}
             <p>
               Don't have an account?{" "}
               <a
@@ -309,203 +299,86 @@ const LoginPage = () => {
                   signupPage();
                 }}
               >
-                                Sign-up              {" "}
+                Sign-up
               </a>
             </p>
-                     {" "}
           </div>
-                   {" "}
+
           <div className="footer-links">
-                       {" "}
             <p
               className="footer-link"
               onClick={() => setShowTerms(true)} // Open Terms and Conditions Modal
             >
-                            Terms & Conditions            {" "}
+              Terms & Conditions
             </p>
-                       {" "}
             <p
               className="footer-link"
               onClick={() => setShowCustomerCare(true)} // Open Customer Care Modal
             >
-                            Customer Care            {" "}
+              Customer Care
             </p>
-                     {" "}
           </div>
-                 {" "}
         </div>
-             {" "}
       </div>
-            {/* Forgot Password Modal */}     {" "}
-      <Dialog open={isForgotPasswordOpen} onClose={handleCloseModal}>
-                <DialogTitle>Forgot Password</DialogTitle>       {" "}
-        <DialogContent>
-                    {error && <p style={{ color: "red" }}>{error}</p>}         {" "}
-          {!otpFieldVisible ? (
-            <>
-                           {" "}
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="input-field"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
-                required
-              />
-                           {" "}
-              <Button
-                onClick={handleSendOTP}
-                disabled={loading}
-                color="primary"
-              >
-                                {loading ? "Sending..." : "Send OTP"}           
-                 {" "}
-              </Button>
-                         {" "}
-            </>
-          ) : (
-            <>
-                           {" "}
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                className="input-field"
-                value={resetOTP}
-                onChange={(e) => setResetOTP(e.target.value)}
-                required
-              />
-                           {" "}
-              <div className="password-field" style={{ marginTop: "15px" }}>
-                               {" "}
-                <input
-                  type={newPasswordVisible ? "text" : "password"}
-                  placeholder="New Password"
-                  className="input-field"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-                               {" "}
-                {newPasswordVisible ? (
-                  <Eye
-                    className="eye-icon"
-                    size={20}
-                    onClick={() => setNewPasswordVisible(false)}
-                  />
-                ) : (
-                  <EyeOff
-                    className="eye-icon"
-                    size={20}
-                    onClick={() => setNewPasswordVisible(true)}
-                  />
-                )}
-                             {" "}
-              </div>
-                           {" "}
-              <Button
-                onClick={handleResetPassword}
-                disabled={loading}
-                color="primary"
-                style={{ marginTop: "15px" }}
-              >
-                                {loading ? "Resetting..." : "Reset Password"}   
-                         {" "}
-              </Button>
-                         {" "}
-            </>
-          )}
-                 {" "}
-        </DialogContent>
-               {" "}
-        <DialogActions>
-                   {" "}
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancel
-          </Button>
-                 {" "}
-        </DialogActions>
-             {" "}
-      </Dialog>
-            {/* Terms and Conditions Modal */}     {" "}
+
+      {/* Terms and Conditions Modal */}
       <Dialog open={showTerms} onClose={() => setShowTerms(false)}>
-                <DialogTitle>Terms and Conditions</DialogTitle>       {" "}
+        <DialogTitle>Terms and Conditions</DialogTitle>
         <DialogContent>
-                    <p>By using DEF, you agree to the following terms:</p>     
-             {" "}
+          <p>By using DEF, you agree to the following terms:</p>
           <ul>
-                       {" "}
             <li>
-                            Users must agree to the Terms before using DEF. If
-              they’re under               18, they need parental consent.      
-                   {" "}
+              Users must agree to the Terms before using DEF. If they’re under
+              18, they need parental consent.
             </li>
-                       {" "}
             <li>
-                            DEF uses AI to analyze facial emotions in real-time
-              and suggests               movies that match your emotional state.
-              These recommendations are               for entertainment
-              purposes.            {" "}
+              DEF uses AI to analyze facial emotions in real-time and suggests
+              movies that match your emotional state. These recommendations are
+              for entertainment purposes.
             </li>
-                       {" "}
             <li>
-                            Your emotional data is processed live through your
-              webcam and not               stored unless clearly stated. We
-              respect your privacy and handle               all data
-              responsibly.            {" "}
+              Your emotional data is processed live through your webcam and not
+              stored unless clearly stated. We respect your privacy and handle
+              all data responsibly.
             </li>
-                       {" "}
             <li>
-                            All designs, software, and content belong to DEF.
-              You can’t copy               or reuse anything without permission.
-                         {" "}
+              All designs, software, and content belong to DEF. You can’t copy
+              or reuse anything without permission.
             </li>
-                       {" "}
             <li>
-                            Emotion detection is based on AI and may not always
-              be accurate.               Recommendations are not guaranteed to
-              match your mood or               preferences exactly.            {" "}
+              Emotion detection is based on AI and may not always be accurate.
+              Recommendations are not guaranteed to match your mood or
+              preferences exactly.
             </li>
-                       {" "}
             <li>
-                            We’re not responsible for any issues caused by using
-              the platform,               including inaccurate suggestions or
-              technical problems.            {" "}
+              We’re not responsible for any issues caused by using the platform,
+              including inaccurate suggestions or technical problems.
             </li>
-                     {" "}
           </ul>
-                 {" "}
         </DialogContent>
-               {" "}
         <DialogActions>
-                   {" "}
           <Button onClick={() => setShowTerms(false)} color="primary">
-                        Close          {" "}
+            Close
           </Button>
-                 {" "}
         </DialogActions>
-             {" "}
       </Dialog>
-            {/* Customer Care Modal */}     {" "}
+
+      {/* Customer Care Modal */}
       <Dialog
         open={showCustomerCare}
         onClose={() => setShowCustomerCare(false)}
       >
-                <DialogTitle>Customer Care</DialogTitle>       {" "}
+        <DialogTitle>Customer Care</DialogTitle>
         <DialogContent>
-                    <p>Email: abdullah5601013@gmail.com</p>         {" "}
-          <p>Contact Number: 03075601013</p>       {" "}
+          <p>Email: abdullah5601013@gmail.com</p>
+          <p>Contact Number: 03075601013</p>
         </DialogContent>
-               {" "}
         <DialogActions>
-                   {" "}
           <Button onClick={() => setShowCustomerCare(false)} color="primary">
-                        Close          {" "}
+            Close
           </Button>
-                 {" "}
         </DialogActions>
-             {" "}
       </Dialog>
-         {" "}
     </>
   );
 };
